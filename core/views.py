@@ -8,7 +8,7 @@ from .serializers import (
     CourseSerializer,
     StudentSerializer,
 )
-from .permissions import IsTeacherOrReadOnly
+from .permissions import IsTeacherOrReadOnly, IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import Course
 
@@ -20,7 +20,7 @@ class TeacherViewSet(
     mixins.RetrieveModelMixin,
     GenericViewSet,
 ):
-    lookup_field = "username"
+    lookup_field = "account__username"
     serializer_class = TeacherSerializer
     queryset = Teacher.objects.all()
 
@@ -32,19 +32,28 @@ class StudentViewSet(
     mixins.RetrieveModelMixin,
     GenericViewSet,
 ):
-    lookup_field = "username"
+    lookup_field = "account__username"
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
 
 
-class CourseViewSet(ModelViewSet):
-    # queryset = Course.objects.all()
-    permission_classes = [IsTeacherOrReadOnly]
+class CourseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet):
     serializer_class = CourseSerializer
 
     def get_queryset(self):
         queryset = Course.objects.all()
         teacher = self.request.query_params.get("teacher", None)
         if teacher is not None:
-            queryset = queryset.filter(teacher=teacher)
+            queryset = queryset.filter(teacher__account__username=teacher)
         return queryset
+
+
+class TeacherCourseViewSet(ModelViewSet):
+    serializer_class = CourseSerializer
+    permission_classes = [IsTeacherOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        return Course.objects.filter(teacher__account__username=self.kwargs["teacher_account__username"])
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user.teacher)

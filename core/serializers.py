@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = ["username", "email", "password"]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -15,18 +16,25 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeacherSerializer(serializers.ModelSerializer):
-    class Meta(UserSerializer.Meta):
+    account = UserSerializer()
+
+    class Meta:
         model = Teacher
+        fields = "__all__"
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    class Meta(UserSerializer.Meta):
+    account = UserSerializer()
+
+    class Meta:
         model = Student
+        fields = "__all__"
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    teacher = StudentSerializer()
+    teacher = TeacherSerializer(read_only=True)
 
     class Meta:
         model = Course
-        fields = "__all__"
+        fields = ["id", "name", "description", "date_start", "date_end", "teacher"]
+        extra_kwargs = {"id": {"read_only": True}}

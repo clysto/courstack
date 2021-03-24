@@ -21,3 +21,13 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
             and request.user.is_authenticated
             and request.user.is_teacher()
         )
+
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    message = "You are not the owner."
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.teacher == request.user.teacher

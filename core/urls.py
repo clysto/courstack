@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.conf import settings
+from rest_framework_nested import routers
 from . import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -12,10 +13,14 @@ router.register(r"courses", views.CourseViewSet, basename="course")
 router.register(r"teachers", views.TeacherViewSet, basename="teacher")
 router.register(r"students", views.StudentViewSet, basename="student")
 
+teachers_router = routers.NestedDefaultRouter(router, r"teachers", lookup="teacher")
+teachers_router.register(r"courses", views.TeacherCourseViewSet, basename="teacher-course")
+
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),
+    path("", include(teachers_router.urls)),
 ]
 
 if settings.DEBUG:
