@@ -16,11 +16,15 @@ router.register(r"students", views.StudentViewSet, basename="student")
 teachers_router = routers.NestedDefaultRouter(router, r"teachers", lookup="teacher")
 teachers_router.register(r"courses", views.TeacherCourseViewSet, basename="teacher-course")
 
+students_router = routers.NestedDefaultRouter(router, r"students", lookup="student")
+students_router.register(r"courses", views.StudentCourseViewSet, basename="student-course")
+
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),
     path("", include(teachers_router.urls)),
+    path("", include(students_router.urls)),
 ]
 
 if settings.DEBUG:

@@ -23,6 +23,15 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
         )
 
 
+class IsStudentPermission(permissions.BasePermission):
+    message = "You are not a student."
+
+    def has_permission(self, request, view):
+        return bool(
+            request.user and request.user.is_authenticated and request.user.is_student()
+        )
+
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     message = "You are not the owner."
 
