@@ -1,7 +1,7 @@
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
-from .models import Teacher, Student
+from .models import Teacher, Student, CourseSection
 from rest_framework.viewsets import ModelViewSet, GenericViewSet, ReadOnlyModelViewSet
 from rest_framework import mixins
 
@@ -9,7 +9,7 @@ from .response import APIResponse
 from .serializers import (
     TeacherSerializer,
     CourseSerializer,
-    StudentSerializer,
+    StudentSerializer, CourseSectionSerializer,
 )
 from .permissions import IsTeacherOrReadOnly, IsOwnerOrReadOnly, IsStudentPermission
 from .models import Course
@@ -86,10 +86,14 @@ class StudentCourseViewSet(ReadOnlyModelViewSet):
         return Course.objects.filter(students__account__username__contains=self.kwargs["student_account__username"])
 
 
-class CourseActionViesSet(GenericViewSet):
-    permission_classes = [IsStudentPermission]
+class CourseSectionViewSet(ModelViewSet):
+    """
+    列出课程下所有的教学日程
+    """
+    serializer_class = CourseSectionSerializer
 
-    @action(detail=True, methods=['post'])
-    def select_course(self):
-        print(123)
-        pass
+    def get_queryset(self):
+        return CourseSection.objects.filter(course_id=self.kwargs["course_pk"])
+
+    def perform_create(self, serializer):
+        serializer.save(course_id=self.kwargs["course_pk"])

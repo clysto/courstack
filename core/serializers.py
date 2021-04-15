@@ -1,4 +1,4 @@
-from .models import User, Course, Teacher, Student
+from .models import User, Course, Teacher, Student, CourseSection, Attachment
 from rest_framework import serializers
 
 
@@ -31,6 +31,12 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = "__all__"
+
+
 class CourseSerializer(serializers.ModelSerializer):
     teacher = TeacherSerializer(read_only=True)
 
@@ -38,3 +44,11 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ["id", "name", "description", "date_start", "date_end", "teacher"]
         extra_kwargs = {"id": {"read_only": True}}
+
+
+class CourseSectionSerializer(serializers.ModelSerializer):
+    attachments = AttachmentSerializer(many=True)
+
+    class Meta:
+        model = CourseSection
+        fields = ["id", "date", "content", "attachments"]

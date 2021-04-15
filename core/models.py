@@ -36,3 +36,25 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CourseSection(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_sections")
+    date = models.DateField()
+    content = models.TextField()
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        verbose_name = "Course Section"
+        verbose_name_plural = "Course Sections"
+
+
+class Attachment(models.Model):
+    course_section = models.ForeignKey(CourseSection, on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField()
+    name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
