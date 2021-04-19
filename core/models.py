@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
@@ -39,7 +39,9 @@ class Course(models.Model):
 
 
 class CourseSection(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="course_sections")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="sections"
+    )
     date = models.DateField()
     content = models.TextField()
 
@@ -52,7 +54,9 @@ class CourseSection(models.Model):
 
 
 class Attachment(models.Model):
-    course_section = models.ForeignKey(CourseSection, on_delete=models.CASCADE, related_name="attachments")
+    course_section = models.ForeignKey(
+        CourseSection, on_delete=models.CASCADE, related_name="attachments"
+    )
     file = models.FileField()
     name = models.CharField(max_length=128)
 

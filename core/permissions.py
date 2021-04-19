@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from .models import User
 
 
 class IsTeacherPermission(permissions.BasePermission):
@@ -33,6 +32,10 @@ class IsStudentPermission(permissions.BasePermission):
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    检查是否为课程的创建者
+    """
+
     message = "You are not the owner."
 
     def has_object_permission(self, request, view, obj):

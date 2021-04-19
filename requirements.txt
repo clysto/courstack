@@ -3,3 +3,9 @@ djangorestframework
 djangorestframework-simplejwt
 psycopg2
 drf-nested-routers
+
+# dev deps
+flake8
+black
+pre-commit
+pep8-naming

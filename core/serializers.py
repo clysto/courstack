@@ -34,20 +34,33 @@ class StudentSerializer(serializers.ModelSerializer):
 class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachment
-        fields = "__all__"
+        fields = ["file", "name"]
 
 
 class CourseSerializer(serializers.ModelSerializer):
     teacher = TeacherSerializer(read_only=True)
+    sections = serializers.HyperlinkedIdentityField(
+        view_name="course-section-list", lookup_url_kwarg="course_pk"
+    )
 
     class Meta:
         model = Course
-        fields = ["id", "name", "description", "date_start", "date_end", "teacher"]
-        extra_kwargs = {"id": {"read_only": True}}
+        fields = [
+            "id",
+            "name",
+            "description",
+            "date_start",
+            "date_end",
+            "teacher",
+            "sections",
+        ]
+        extra_kwargs = {
+            "id": {"read_only": True},
+        }
 
 
 class CourseSectionSerializer(serializers.ModelSerializer):
-    attachments = AttachmentSerializer(many=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = CourseSection

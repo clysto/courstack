@@ -14,13 +14,19 @@ router.register(r"teachers", views.TeacherViewSet, basename="teacher")
 router.register(r"students", views.StudentViewSet, basename="student")
 
 teachers_router = routers.NestedDefaultRouter(router, r"teachers", lookup="teacher")
-teachers_router.register(r"courses", views.TeacherCourseViewSet, basename="teacher-course")
+teachers_router.register(
+    r"courses", views.TeacherCourseViewSet, basename="teacher-course"
+)
 
 students_router = routers.NestedDefaultRouter(router, r"students", lookup="student")
-students_router.register(r"courses", views.StudentCourseViewSet, basename="student-course")
+students_router.register(
+    r"courses", views.StudentCourseViewSet, basename="student-course"
+)
 
 courses_router = routers.NestedDefaultRouter(router, r"courses", lookup="course")
-courses_router.register(r"sections", views.CourseSectionViewSet, basename="course-section")
+courses_router.register(
+    r"sections", views.CourseSectionViewSet, basename="course-section"
+)
 
 urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
